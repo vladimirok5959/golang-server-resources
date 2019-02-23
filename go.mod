@@ -1,1 +1,1 @@
-module golang-server-resources
+module github.com/vladimirok5959/golang-server-resources
