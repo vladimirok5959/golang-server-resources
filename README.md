@@ -24,10 +24,10 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Resource response
-		if res.Response(w, r, func(w http.ResponseWriter, r *http.Request, i *resource.Resource) {
+		if res.Response(w, r, func(w http.ResponseWriter, r *http.Request, i *resource.OneResource) {
 			w.Header().Set("Some-Header", "test")
 			w.Header().Set("Cache-Control", "public, max-age=31536000")
-		}, func(w http.ResponseWriter, r *http.Request, i *resource.Resource) {
+		}, func(w http.ResponseWriter, r *http.Request, i *resource.OneResource) {
 			w.Write([]byte("\n\n/* Path: " + (*i).Path + " */"))
 			w.Write([]byte("\n/* Ctype: " + (*i).Ctype + " */"))
 		}) {
