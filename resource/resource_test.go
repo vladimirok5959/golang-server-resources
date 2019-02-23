@@ -11,10 +11,10 @@ func handle() http.Handler {
 	res.Add("some1.css", "text/css", []byte(`.some1{display:none}`))
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if res.Response(w, r, func(w http.ResponseWriter, r *http.Request, i *Resource) {
+		if res.Response(w, r, func(w http.ResponseWriter, r *http.Request, i *OneResource) {
 			w.Header().Set("Some-Header", "test")
 			w.Header().Set("Cache-Control", "public, max-age=31536000")
-		}, func(w http.ResponseWriter, r *http.Request, i *Resource) {
+		}, func(w http.ResponseWriter, r *http.Request, i *OneResource) {
 			w.Write([]byte("\n\n/* Path: " + (*i).Path + " */"))
 			w.Write([]byte("\n/* Ctype: " + (*i).Ctype + " */"))
 		}) {
