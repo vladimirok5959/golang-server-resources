@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"golang-server-resources/resource"
+	"github.com/vladimirok5959/golang-server-resources/resource"
 )
 
 func main() {
