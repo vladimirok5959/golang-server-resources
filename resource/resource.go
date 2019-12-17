@@ -31,16 +31,16 @@ func etag(str string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func modified(p string, s int, v int64, w *http.ResponseWriter, r *http.Request) bool {
-	(*w).Header().Set("Content-Length", fmt.Sprintf("%d", s))
-	(*w).Header().Set("Cache-Control", "no-cache")
+func modified(p string, s int, v int64, w http.ResponseWriter, r *http.Request) bool {
+	w.Header().Set("Content-Length", fmt.Sprintf("%d", s))
+	w.Header().Set("Cache-Control", "no-cache")
 
 	// Set: ETag
 	ehash := etag(fmt.Sprintf("%s-%d-%d", p, s, v))
-	(*w).Header().Set("ETag", fmt.Sprintf("%s", ehash))
+	w.Header().Set("ETag", fmt.Sprintf("%s", ehash))
 
 	// Set: Last-Modified
-	(*w).Header().Set(
+	w.Header().Set(
 		"Last-Modified",
 		time.Unix(v, 0).In(time.FixedZone("GMT", 0)).Format("Wed, 01 Oct 2006 15:04:05 GMT"),
 	)
@@ -48,7 +48,7 @@ func modified(p string, s int, v int64, w *http.ResponseWriter, r *http.Request)
 	// Check: ETag
 	if cc := r.Header.Get("Cache-Control"); cc != "no-cache" {
 		if inm := r.Header.Get("If-None-Match"); inm == ehash {
-			(*w).WriteHeader(http.StatusNotModified)
+			w.WriteHeader(http.StatusNotModified)
 			return false
 		}
 	}
@@ -58,7 +58,7 @@ func modified(p string, s int, v int64, w *http.ResponseWriter, r *http.Request)
 		if ims := r.Header.Get("If-Modified-Since"); ims != "" {
 			if t, err := time.Parse("Wed, 01 Oct 2006 15:04:05 GMT", ims); err == nil {
 				if time.Unix(v, 0).In(time.FixedZone("GMT", 0)).Unix() <= t.In(time.FixedZone("GMT", 0)).Unix() {
-					(*w).WriteHeader(http.StatusNotModified)
+					w.WriteHeader(http.StatusNotModified)
 					return false
 				}
 			}
@@ -102,7 +102,7 @@ func (this *Resource) Response(w http.ResponseWriter, r *http.Request, before fu
 
 	// Send resource
 	w.Header().Set("Content-Type", res.Ctype)
-	if !modified(r.URL.Path, len(res.Bytes), res.MTime, &w, r) {
+	if !modified(r.URL.Path, len(res.Bytes), res.MTime, w, r) {
 		return true
 	}
 	w.Write(res.Bytes)
