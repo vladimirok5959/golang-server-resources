@@ -1,9 +1,18 @@
 VERSION="1.0.3"
 
-default: test
+default: debug test run
+
+debug:
+	go vet ./...
+	gofmt -d ./
+	gofmt -w ./
+	go build -mod vendor -o ./out
 
 test:
 	@go test -v ./...
+
+run:
+	@./out --color=always
 
 build: clean
 	@-mkdir ./bin

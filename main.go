@@ -8,17 +8,16 @@ import (
 
 func main() {
 	res := resource.New()
-	res.Add("some1.css", "text/css", []byte(`.some1{display:none}`))
-	res.Add("some2.css", "text/css", []byte(`.some2{display:none}`))
-	res.Add("some3.css", "text/css", []byte(`.some3{display:none}`))
-	res.Add("some4.css", "text/css", []byte(`.some4{display:none}`))
-	res.Add("some5.css", "text/css", []byte(`.some5{display:none}`))
+	res.Add("some1.css", "text/css", []byte(`.some1{display:none}`), 1)
+	res.Add("some2.css", "text/css", []byte(`.some2{display:none}`), 1)
+	res.Add("some3.css", "text/css", []byte(`.some3{display:none}`), 1)
+	res.Add("some4.css", "text/css", []byte(`.some4{display:none}`), 1)
+	res.Add("some5.css", "text/css", []byte(`.some5{display:none}`), 1)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Resource response
 		if res.Response(w, r, func(w http.ResponseWriter, r *http.Request, i *resource.OneResource) {
 			w.Header().Set("Some-Header", "test")
-			w.Header().Set("Cache-Control", "public, max-age=31536000")
 		}, func(w http.ResponseWriter, r *http.Request, i *resource.OneResource) {
 			w.Write([]byte("\n\n/* Path: " + (*i).Path + " */"))
 			w.Write([]byte("\n/* Ctype: " + (*i).Ctype + " */"))

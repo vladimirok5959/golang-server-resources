@@ -8,7 +8,7 @@ import (
 
 func handle() http.Handler {
 	res := New()
-	res.Add("some1.css", "text/css", []byte(`.some1{display:none}`))
+	res.Add("some1.css", "text/css", []byte(`.some1{display:none}`), 1)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if res.Response(w, r, func(w http.ResponseWriter, r *http.Request, i *OneResource) {
