@@ -32,7 +32,6 @@ func etag(str string) string {
 }
 
 func modified(p string, s int, v int64, w http.ResponseWriter, r *http.Request) bool {
-	w.Header().Set("Content-Length", fmt.Sprintf("%d", s))
 	w.Header().Set("Cache-Control", "no-cache")
 
 	// Set: ETag
@@ -95,16 +94,18 @@ func (this *Resource) Response(w http.ResponseWriter, r *http.Request, before fu
 		return false
 	}
 
+	// Cache headers
+	w.Header().Set("Content-Type", res.Ctype)
+	if !modified(r.URL.Path, len(res.Bytes), res.MTime, w, r) {
+		return true
+	}
+
 	// Call `before` callback
 	if before != nil {
 		before(w, r, &res)
 	}
 
 	// Send resource
-	w.Header().Set("Content-Type", res.Ctype)
-	if !modified(r.URL.Path, len(res.Bytes), res.MTime, w, r) {
-		return true
-	}
 	w.Write(res.Bytes)
 
 	// Call `after` callback
